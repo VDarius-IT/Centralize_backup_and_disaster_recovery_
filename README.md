@@ -100,8 +100,6 @@ graph TD
 
 ```
 
-**[TODO: Write a paragraph explaining the data flow. For example:** *"The backup orchestrator, running on a dedicated Linux server, executes scripts based on a cron schedule. These scripts connect to the on-premise vSphere API to snapshot VMs and use the AWS CLI to create EBS snapshots in the cloud. Backup data and metadata are stored in the central repository, while operational metrics (e.g., job duration, success/failure) are exposed via a Prometheus exporter. Grafana queries Prometheus to display dashboards, and Alertmanager fires alerts on predefined rules."* **]**
-
 ---
 
 ## 🛠️ Technology Stack
