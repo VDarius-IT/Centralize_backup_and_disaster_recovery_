@@ -105,10 +105,10 @@ graph TD
 
 *   **Automation & Scripting**: Python (Boto3), Bash
 *   **Cloud Provider**: AWS (EC2, EBS, S3, IAM)
-*   **On-Premise Virtualization**: `[TODO: Specify vSphere, Hyper-V, or other]`
+*   **On-Premise Virtualization**: Hyper-V
 *   **Monitoring**: Prometheus
 *   **Visualization & Alerting**: Grafana, Alertmanager
-*   **Infrastructure as Code (Optional)**: `[TODO: Specify if you used Terraform/Ansible]`
+*   **Infrastructure as Code (Optional)**: Terraform
 *   **Notifications**: Slack, PagerDuty, Email
 
 ---
@@ -119,13 +119,15 @@ Follow these instructions to set up the backup and recovery environment.
 
 ### Prerequisites
 
-*   `[TODO: List all required tools and access levels. Be specific with versions.]`
-*   **Example:**
-    *   Python 3.8+ with `boto3` and `requests`
-    *   AWS CLI v2, configured with an IAM user/role with appropriate permissions.
-    *   SSH key-based access to on-premise hypervisor or management server.
-    *   Docker & Docker Compose (for running the monitoring stack).
-    *   `rsync` and `jq` installed.
+*   Python 3.8+ with `boto3`, `pyyaml`, and `requests`
+*   AWS CLI v2, configured with an IAM role/user that has:
+    *   `AmazonEC2FullAccess` (or least-privilege: `CreateSnapshot`, `Describe*`, `Start/StopInstances`, etc.)
+    *   `AmazonS3ReadOnlyAccess` (for audit) and write access to your backup bucket
+    *   `CloudWatchReadOnlyAccess` (optional for metrics)
+*   SSH key-based access to on-premise hypervisor management server with `virsh` or `PowerShell` access
+*   Docker & Docker Compose v2+ (to run Prometheus, Grafana, Alertmanager)
+*   `rsync`, `jq`, `curl`, and `pigz` (for compression) installed on the backup orchestrator host
+*   Outbound internet access for AWS API and dependency downloads
 
 ### Installation & Configuration
 
@@ -136,16 +138,21 @@ Follow these instructions to set up the backup and recovery environment.
     ```
 
 2.  **Install dependencies:**
-    `[TODO: Provide command to install Python/other dependencies]`
     ```sh
     pip install -r requirements.txt
     ```
 
 3.  **Configure the environment:**
-    `[TODO: Explain how to configure your scripts. This is a critical step.]`
-    *   Rename `config.env.example` to `config.env`.
-    *   Update `.env` with your AWS credentials, on-premise endpoints, and S3 bucket names.
-    *   Define your backup targets in `targets.yml`.
+
+*   Rename `config.env.example` to `config.env`.
+*   Update `config.env` with the following:
+    *   Your AWS credentials (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`)
+    *   S3 bucket name for storing backup manifests and artifacts
+    *   On-premise hypervisor IP, SSH user, and VM list/IDs
+    *   Backup retention settings (daily/weekly/monthly)
+*   Define your backup targets (VMs, EC2 instances) in `configs/targets.yml` using the provided schema.
+*   Ensure the orchestrator server has SSH keys deployed to on-premise hosts and IAM role attached (if running on EC2).
+
 
 4.  **Launch the Monitoring Stack:**
     ```sh
@@ -162,9 +169,8 @@ Follow these instructions to set up the backup and recovery environment.
 ### Running a Manual Backup
 
 To trigger an on-demand backup for a specific target:
-`[TODO: Provide the exact command and an example]`
 ```sh
-python run_backup.py --target <target_name_from_targets.yml>
+python scripts/run_backup.py --target webserver-prod
 ```
 
 ### Performing a Restore
