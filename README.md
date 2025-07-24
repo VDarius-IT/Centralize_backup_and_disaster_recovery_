@@ -66,25 +66,25 @@ The architecture is designed for resilience and clarity. A central backup orches
 
 ```mermaid
 graph TD
-    subgraph On-Premise
-        VM1[VMware/Hyper-V VM]
-        VM2[VMware/Hyper-V VM]
+    subgraph "On-Premise"
+        VM1["VMware/Hyper-V VM"]
+        VM2["VMware/Hyper-V VM"]
     end
 
-    subgraph AWS Cloud
-        EC2[EC2 Instance] --> EBS[EBS Volume]
+    subgraph "AWS Cloud"
+        EC2["EC2 Instance"] --> EBS["EBS Volume"]
     end
 
     subgraph "Backup & DR Control Plane"
-        Orchestrator[Backup Orchestrator<br/>(Python/Bash Scripts)]
-        Scheduler[Scheduler<br/>(Cron / systemd)]
-        BackupRepo[Central Backup Repository<br/>(Encrypted, Versioned)]
+        Orchestrator["Backup Orchestrator<br/>(Python/Bash Scripts)"]
+        Scheduler["Scheduler<br/>(Cron / systemd)"]
+        BackupRepo["Central Backup Repository<br/>(Encrypted, Versioned)"]
     end
 
     subgraph "Monitoring & Alerting"
-        Prometheus[Prometheus<br/>(Metrics Collection)]
-        Grafana[Grafana<br/>(Dashboards)]
-        Alertmanager[Alertmanager<br/>(Notifications)]
+        Prometheus["Prometheus<br/>(Metrics Collection)"]
+        Grafana["Grafana<br/>(Dashboards)"]
+        Alertmanager["Alertmanager<br/>(Notifications)"]
     end
 
     VM1 -- API/SSH --> Orchestrator
@@ -96,8 +96,7 @@ graph TD
     
     Prometheus --> Grafana
     Prometheus --> Alertmanager
-    Alertmanager -- Alerts --> Slack[Slack / Email]
-
+    Alertmanager -- Alerts --> Slack["Slack / Email"]
 ```
 
 ---
