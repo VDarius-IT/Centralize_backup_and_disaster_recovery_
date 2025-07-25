@@ -175,12 +175,17 @@ python scripts/run_backup.py --target webserver-prod
 
 ### Performing a Restore
 
-The restoration process is documented in detail in the runbooks. At a high level:
-`[TODO: Provide the high-level steps and a sample command]`
-1.  Identify the required backup/snapshot ID from logs or the Grafana dashboard.
-2.  Run the restoration script with the identified ID and destination:
+```markdown
+1.  Identify the required backup snapshot ID from the Grafana dashboard, logs, or using:
     ```sh
-    python run_restore.py --snapshot-id <aws-snapshot-id> --destination-instance <aws-instance-id>
+    aws ec2 describe-snapshots --filters "tag:BackupName=webserver-prod" --query 'Snapshots[*].[SnapshotId,StartTime,VolumeId]' --output table
+    ```
+2.  Run the restoration script:
+    ```sh
+    python scripts/run_restore.py --snapshot-id snap-0f5d1a2b3c4d5e --destination-instance i-987zyx --region us-east-1
+    ```
+3.  Validate service health post-restore via monitoring or application checks.
+4.  Update DNS/failover if restoring to a new instance (DR scenario).
     ```
 
 ---
@@ -192,7 +197,6 @@ The restoration process is documented in detail in the runbooks. At a high level
     *   RPO Compliance Tracker
     *   Backup Duration & Data Size Trends
     *   Storage Capacity
-    `[TODO: Add a screenshot of your main Grafana dashboard here. This is very impactful!]`
 
 *   **Prometheus Alerts**: Alerting rules are defined in `prometheus/alert.rules.yml`. Key alerts include:
     *   `BackupJobFailed`: Triggers if a backup job fails.
@@ -207,9 +211,9 @@ Our recovery objectives are tiered to align with business criticality.
 
 | Tier | RTO (Recovery Time Objective) | RPO (Recovery Point Objective) | Example Workloads                        |
 | :--- | :---------------------------- | :----------------------------- | :--------------------------------------- |
-| **1**| `[TODO: e.g., < 1 hour]`      | `[TODO: e.g., < 15 minutes]`   | `[TODO: e.g., Critical Databases, Auth Services]` |
-| **2**| `[TODO: e.g., < 4 hours]`     | `[TODO: e.g., < 12 hours]`     | `[TODO: e.g., Internal Apps, Web Servers]` |
-| **3**| `[TODO: e.g., < 24 hours]`    | `[TODO: e.g., < 24 hours]`     | `[TODO: e.g., Dev/Test Environments, Archives]`  |
+| **1**| **< 1 hour**                  | **< 15 minutes**               | **Critical Databases, Identity Services, Payment Gateways** |
+| **2**| **< 4 hours**                 | **< 12 hours**                 | **Internal Applications, Web Servers, APIs** |
+| **3**| **< 24 hours**                | **< 24 hours**                 | **Dev/Test Environments, Archives, Logs** |
 
 Detailed, step-by-step DR plans for various scenarios are located in the `/runbooks` directory.
 *   `[DR Plan: On-Premise Host Failure](./runbooks/on_prem_host_failure.md)`
