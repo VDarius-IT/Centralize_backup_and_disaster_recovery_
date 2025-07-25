@@ -175,7 +175,6 @@ python scripts/run_backup.py --target webserver-prod
 
 ### Performing a Restore
 
-```markdown
 1.  Identify the required backup snapshot ID from the Grafana dashboard, logs, or using:
     ```sh
     aws ec2 describe-snapshots --filters "tag:BackupName=webserver-prod" --query 'Snapshots[*].[SnapshotId,StartTime,VolumeId]' --output table
@@ -186,7 +185,7 @@ python scripts/run_backup.py --target webserver-prod
     ```
 3.  Validate service health post-restore via monitoring or application checks.
 4.  Update DNS/failover if restoring to a new instance (DR scenario).
-    ```
+
 
 ---
 
