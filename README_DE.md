@@ -75,7 +75,7 @@ graph TD
         EC2["EC2-Instanz"] --> EBS["EBS-Volume"]
     end
 
-    subgraph "Backup- & DR-Steuerungsebene"
+    subgraph "Backup & DR Steuerungsebene"
         Orchestrator["Backup-Orchestrator<br/>(Python/Bash-Skripte)"]
         Scheduler["Scheduler<br/>(Cron / systemd)"]
         BackupRepo["Zentrales Backup-Repository<br/>(Verschlüsselt, Versioniert)"]
