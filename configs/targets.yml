@@ -1,0 +1,9 @@
+targets:
+  - name: webserver-prod
+    type: ec2
+    instance_id: i-0123456789abcdef0
+  - name: db-primary
+    type: onprem
+    host: 192.168.10.10
+    method: ssh
+    path: /var/lib/mysql
